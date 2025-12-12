@@ -19,6 +19,9 @@ export class AuthService {
   }
 
   public login(loginRequest: LoginRequest): Observable<SessionInformation> {
-    return this.httpClient.post<SessionInformation>(`${this.pathService}/login`, loginRequest);
+    return this.httpClient.post<SessionInformation>(
+      `${this.pathService}/login`, 
+      loginRequest
+    );
   }
 }
