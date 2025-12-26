@@ -95,7 +95,7 @@ describe('DetailComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  //  Les informations de la session sont correctement
+  // Les informations de la session sont correctement
   // affichées
   it('should fetch session details', () => {
     const html = fixture.nativeElement.textContent;
@@ -105,10 +105,17 @@ describe('DetailComponent', () => {
     expect(html).toContain('2 attendees');
     expect(html).toContain('John DOE');
   });
-  //   Le bouton Delete apparaît si l'utilisateur connecté
+  // Le bouton Delete apparaît si l'utilisateur connecté
   // est un admin
   it('should show delete button for admin users', () => {
     const html = fixture.nativeElement.textContent; 
     expect(html).toContain('Morning Yoga');
+  });
+  //  La session est correctement supprimée
+  it('should delete session', () => {
+    component.delete();
+    expect(mockSessionApiService.delete).toHaveBeenCalledWith('1');
+    expect(mockSnackBar.open).toHaveBeenCalledWith('Session deleted !', 'Close', { duration: 3000 });
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['sessions']);
   });
 });

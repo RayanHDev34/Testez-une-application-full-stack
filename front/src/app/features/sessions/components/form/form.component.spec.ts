@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { expect } from '@jest/globals';
-
+import { Session } from '../../interfaces/session.interface';
 import { FormComponent } from './form.component';
 import { SessionService } from 'src/app/services/session.service';
 import { SessionApiService } from '../../services/session-api.service';
@@ -135,5 +135,22 @@ describe('FormComponent', () => {
     component.submit();
     expect(form.get('name')?.hasError('required')).toBe(true);
     expect(form.get('date')?.hasError('required')).toBe(true);
+  });
+  // La session est mise à jour
+  it('should update a session on submit', () => {
+    (mockRouter as any).url = '/sessions/update/1';
+    fixture = TestBed.createComponent(FormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    component.sessionForm?.setValue({
+      name: 'Updated Yoga',
+      description: 'Updated description',
+      date: new Date(),
+      teacher_id: 10
+    });
+    component.onUpdate = true;
+    component.submit();
+    expect(mockSessionApiService.update).toHaveBeenCalledWith('1', expect.any(Object));
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['sessions']);
   });
 });
