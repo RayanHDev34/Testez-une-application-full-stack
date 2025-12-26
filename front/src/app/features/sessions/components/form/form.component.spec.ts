@@ -153,4 +153,23 @@ describe('FormComponent', () => {
     expect(mockSessionApiService.update).toHaveBeenCalledWith('1', expect.any(Object));
     expect(mockRouter.navigate).toHaveBeenCalledWith(['sessions']);
   });
-});
+  //   L’affichage d’erreur en l’absence d’un champ
+  // obligatoire
+  it('should show error if required fields are missing on update', () => {
+    (mockRouter as any).url = '/sessions/update/1';
+    fixture = TestBed.createComponent(FormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    const form = component.sessionForm!;
+    form.setValue({
+      name: '',
+      description: 'Updated description',
+      date: '',
+      teacher_id: 10
+    });
+    component.onUpdate = true;
+    component.submit();
+    expect(form.get('name')?.hasError('required')).toBe(true);
+    expect(form.get('date')?.hasError('required')).toBe(true);
+  });
+});   
