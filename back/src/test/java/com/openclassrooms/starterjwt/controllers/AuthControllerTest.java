@@ -2,7 +2,9 @@ package com.openclassrooms.starterjwt.controllers;
 
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.payload.request.LoginRequest;
+import com.openclassrooms.starterjwt.payload.request.SignupRequest;
 import com.openclassrooms.starterjwt.payload.response.JwtResponse;
+import com.openclassrooms.starterjwt.payload.response.MessageResponse;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
@@ -83,5 +85,49 @@ class AuthControllerTest {
         assertEquals("fake-jwt", body.getToken());
         assertEquals("test@test.com", body.getUsername());
         assertFalse(body.getAdmin());
+    }
+    @Test
+    void shouldRegisterUserSuccessfully() {
+        SignupRequest request = new SignupRequest();
+        request.setEmail("test@test.com");
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setPassword("password");
+
+        when(userRepository.existsByEmail("test@test.com"))
+                .thenReturn(false);
+
+        when(passwordEncoder.encode("password"))
+                .thenReturn("encoded-password");
+
+        ResponseEntity<?> response = authController.registerUser(request);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertInstanceOf(MessageResponse.class, response.getBody());
+        assertEquals(
+                "User registered successfully!",
+                ((MessageResponse) response.getBody()).getMessage()
+        );
+
+        verify(userRepository).save(any(User.class));
+    }
+    @Test
+    void shouldFailWhenEmailAlreadyExists() {
+        SignupRequest request = new SignupRequest();
+        request.setEmail("test@test.com");
+
+        when(userRepository.existsByEmail("test@test.com"))
+                .thenReturn(true);
+
+        ResponseEntity<?> response = authController.registerUser(request);
+
+        assertEquals(400, response.getStatusCodeValue());
+        assertInstanceOf(MessageResponse.class, response.getBody());
+        assertEquals(
+                "Error: Email is already taken!",
+                ((MessageResponse) response.getBody()).getMessage()
+        );
+
+        verify(userRepository, never()).save(any());
     }
 }
