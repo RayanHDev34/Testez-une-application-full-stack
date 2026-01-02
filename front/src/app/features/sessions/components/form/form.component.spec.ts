@@ -13,7 +13,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { expect } from '@jest/globals';
-import { Session } from '../../interfaces/session.interface';
 import { FormComponent } from './form.component';
 import { SessionService } from 'src/app/services/session.service';
 import { SessionApiService } from '../../services/session-api.service';
