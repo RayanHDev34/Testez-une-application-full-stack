@@ -1,13 +1,26 @@
 import { HttpClientModule } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 import { expect } from '@jest/globals';
 
 import { AppComponent } from './app.component';
+import { SessionService } from './services/session.service';
+import { AuthService } from './features/auth/services/auth.service';
 
+const mockSessionService = {
+  logOut: jest.fn(),
+  $isLogged: jest.fn().mockReturnValue(of(true))
+};
+const mockAuthService = {};
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  let router: Router;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -15,15 +28,24 @@ describe('AppComponent', () => {
         HttpClientModule,
         MatToolbarModule
       ],
-      declarations: [
-        AppComponent
-      ],
+      declarations: [AppComponent],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: AuthService, useValue: mockAuthService }
+      ]
     }).compileComponents();
-  });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+
+    jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));
+
+    fixture.detectChanges();
+  });
+  it('should logout user and redirect to home', () => {
+    component.logout();
+    expect(mockSessionService.logOut).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['']);
   });
 });

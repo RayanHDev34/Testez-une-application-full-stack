@@ -1,42 +1,58 @@
-import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of, throwError } from 'rxjs';
 import { expect } from '@jest/globals';
 
 import { RegisterComponent } from './register.component';
-import { RegisterRequest } from '../../interfaces/registerRequest.interface';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { RegisterRequest } from '../../interfaces/registerRequest.interface';
+
+
+const mockAuthService = {
+  register: jest.fn()
+};
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let authService: AuthService;
   let router: Router;
+
   beforeEach(async () => {
+    jest.clearAllMocks(); // 🔑 TRÈS IMPORTANT
+
     await TestBed.configureTestingModule({
       declarations: [RegisterComponent],
       imports: [
+        RouterTestingModule,
         BrowserAnimationsModule,
-        HttpClientModule,
-        ReactiveFormsModule,  
+        ReactiveFormsModule,
         MatCardModule,
         MatFormFieldModule,
         MatIconModule,
         MatInputModule
+      ],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService }
       ]
-    })
-      .compileComponents();
-    authService = TestBed.inject(AuthService);
-    router = TestBed.inject(Router);
+    }).compileComponents();
+
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
+
+    authService = TestBed.inject(AuthService);
+    router = TestBed.inject(Router);
+
+    // 🔑 mock navigation
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
     fixture.detectChanges();
   });
 
@@ -44,46 +60,48 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // un test qui valide la creation d'un compte
   it('should register successfully', () => {
     jest.spyOn(authService, 'register').mockReturnValue(of(void 0));
+
     const registerRequest: RegisterRequest = {
       email: 'test@test.com',
       firstName: 'John',
       lastName: 'Doe',
       password: 'password'
     };
+
     component.form.setValue(registerRequest);
     component.submit();
+
     expect(authService.register).toHaveBeenCalledWith(registerRequest);
     expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  // un test qui check la gestion d'erreur lors de la creation d'un compte
-  it('should handle login error', () => {
-      jest.spyOn(authService, 'register')
+  it('should handle register error', () => {
+    jest.spyOn(authService, 'register')
       .mockReturnValue(throwError(() => new Error('Register failed')));
-  
-      component.form.setValue({
-        email: 'rayan@gmail.com',
-        firstName: 'rayan',
-        lastName: 'rayan',
-        password: 'rayan'
-      });
-  
-      component.submit();
-      expect(component.onError).toBe(true);
+
+    component.form.setValue({
+      email: 'rayan@gmail.com',
+      firstName: 'Rayan',
+      lastName: 'Rayan',
+      password: 'password'
     });
 
-  // grise le button submit en l'absence d'un champ obligatoire
-  it('should disable submit button if form is invalid', () => {
+    component.submit();
+
+    expect(component.onError).toBe(true);
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('should invalidate form if email is missing', () => {
     component.form.setValue({
       email: '',
       firstName: 'John',
       lastName: 'Doe',
       password: 'password'
     });
-    expect(component.form.valid).toBeFalsy();
+
+    expect(component.form.invalid).toBe(true);
   });
-  
 });
