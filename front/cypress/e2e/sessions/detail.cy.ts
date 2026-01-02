@@ -1,10 +1,8 @@
-/// <reference types="cypress" />
 
 describe('Session detail – E2E', () => {
 
   it('should display session detail when clicking on Detail', () => {
 
-    // 🔐 LOGIN
     cy.intercept('POST', '**/login', {
       statusCode: 200,
       body: {
@@ -18,7 +16,6 @@ describe('Session detail – E2E', () => {
       }
     }).as('login');
 
-    // 📋 LISTE DES SESSIONS
     cy.intercept('GET', '**/api/session', {
       statusCode: 200,
       body: [
@@ -33,7 +30,6 @@ describe('Session detail – E2E', () => {
       ]
     }).as('sessions');
 
-    // 🔍 DÉTAIL SESSION
     cy.intercept('GET', '**/api/session/1', {
       statusCode: 200,
       body: {
@@ -48,7 +44,6 @@ describe('Session detail – E2E', () => {
       }
     }).as('sessionDetail');
 
-    // 👤 PROF
     cy.intercept('GET', '**/api/teacher/1', {
       statusCode: 200,
       body: {
@@ -58,7 +53,6 @@ describe('Session detail – E2E', () => {
       }
     }).as('teacher');
 
-    // 🚀 VISIT LOGIN
     cy.visit('/login');
 
     cy.get('input[formControlName="email"]').type('test@test.com');
@@ -67,20 +61,16 @@ describe('Session detail – E2E', () => {
 
     cy.wait('@login');
 
-    // 📄 ASSERT LIST PAGE
     cy.wait('@sessions');
     cy.contains('Yoga morning').should('be.visible');
 
-    // 👉 CLICK DETAIL
     cy.contains('Detail').click();
 
-    // 📄 ASSERT DETAIL PAGE
     cy.wait('@sessionDetail');
     cy.wait('@teacher');
 
     cy.url().should('include', '/sessions/detail/1');
 
-    // ✅ CONTENU
     cy.contains('Yoga Morning').should('be.visible');
     cy.contains('Relax session').should('be.visible');
     cy.contains('Jane DOE').should('be.visible');
