@@ -1,5 +1,6 @@
-package com.openclassrooms.starterjwt.controllers;
+package com.openclassrooms.starterjwt.unit.controllers;
 
+import com.openclassrooms.starterjwt.controllers.SessionController;
 import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;

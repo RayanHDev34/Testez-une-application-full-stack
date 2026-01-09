@@ -1,5 +1,6 @@
-package com.openclassrooms.starterjwt.controllers;
+package com.openclassrooms.starterjwt.unit.controllers;
 
+import com.openclassrooms.starterjwt.controllers.AuthController;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.payload.request.LoginRequest;
 import com.openclassrooms.starterjwt.payload.request.SignupRequest;
