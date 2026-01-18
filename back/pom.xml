@@ -126,6 +126,8 @@
                         <exclude>**/models/**</exclude>
                         <exclude>**/mapper/**</exclude>
                         <exclude>**/payload/**</exclude>
+                        <exclude>**/security/**</exclude>
+                        <exclude>**/jwt/**</exclude>
                         <exclude>**/*Application*</exclude>
                     </excludes>
                 </configuration>

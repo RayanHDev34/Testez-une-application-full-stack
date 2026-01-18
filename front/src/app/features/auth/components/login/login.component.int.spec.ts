@@ -112,5 +112,53 @@ describe('LoginComponent – Integration', () => {
   expect(router.navigate).not.toHaveBeenCalled();
   expect(errorMessage).toBeTruthy();
 });
+it('should not submit form when email is invalid', () => {
+  // GIVEN
+  const native = fixture.nativeElement;
+
+  const emailInput = native.querySelector('input[formControlName="email"]');
+  const passwordInput = native.querySelector('input[formControlName="password"]');
+  const submitButton = native.querySelector('button[type="submit"]');
+
+  // WHEN – email invalide
+  emailInput.value = 'invalid-email';
+  emailInput.dispatchEvent(new Event('input'));
+
+  passwordInput.value = 'password';
+  passwordInput.dispatchEvent(new Event('input'));
+
+  fixture.detectChanges();
+
+  submitButton.click();
+
+  // THEN
+  expect(mockAuthService.login).not.toHaveBeenCalled();
+  expect(mockSessionService.logIn).not.toHaveBeenCalled();
+  expect(router.navigate).not.toHaveBeenCalled();
+});
+it('should not submit form when password is empty', () => {
+  // GIVEN
+  const native = fixture.nativeElement;
+
+  const emailInput = native.querySelector('input[formControlName="email"]');
+  const passwordInput = native.querySelector('input[formControlName="password"]');
+  const submitButton = native.querySelector('button[type="submit"]');
+
+  // WHEN – mot de passe vide
+  emailInput.value = 'test@test.com';
+  emailInput.dispatchEvent(new Event('input'));
+
+  passwordInput.value = '';
+  passwordInput.dispatchEvent(new Event('input'));
+
+  fixture.detectChanges();
+
+  submitButton.click();
+
+  // THEN
+  expect(mockAuthService.login).not.toHaveBeenCalled();
+  expect(mockSessionService.logIn).not.toHaveBeenCalled();
+  expect(router.navigate).not.toHaveBeenCalled();
+});
 
 });

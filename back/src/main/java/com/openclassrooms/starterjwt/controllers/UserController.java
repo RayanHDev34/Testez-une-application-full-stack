@@ -1,6 +1,6 @@
 package com.openclassrooms.starterjwt.controllers;
 
-import com.openclassrooms.starterjwt.mapper.UserMapper;
+import com.openclassrooms.starterjwt.exception.mapper.UserMapper;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.UserService;
 import org.springframework.http.HttpStatus;

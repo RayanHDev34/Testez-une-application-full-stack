@@ -1,4 +1,4 @@
-package com.openclassrooms.starterjwt.mapper;
+package com.openclassrooms.starterjwt.exception.mapper;
 
 import java.util.List;
 

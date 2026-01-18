@@ -1,4 +1,4 @@
-package com.openclassrooms.starterjwt.mapper;
+package com.openclassrooms.starterjwt.exception.mapper;
 
 import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.models.Session;
